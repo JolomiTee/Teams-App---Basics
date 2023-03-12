@@ -3,6 +3,10 @@ import Header from './Header';
 import Footer from './Footer';
 import Employees from './Employees';
 import { useState, useEffect } from "react"
+import GroupedTeamMembers from './GroupedTeamMembers';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Nav from './Nav';
+import NotFound from './NotFound';
 
 function App() {
 
@@ -105,7 +109,7 @@ function App() {
   }, [selectedTeam]);
 
   function handleTeamChange(event) {
-    console.log(event.target.value);S
+    console.log(event.target.value);
     setTeam(event.target.value);
   }
 
@@ -122,19 +126,40 @@ function App() {
 
   return (
     <div className="App">
-      <Header
-        selectedTeam = {selectedTeam}
-        teamMemberCount = {employees.filter((employee) => employee.teamName === selectedTeam).length}
-      />
+      <Router>
+        <Nav  />
+        <Header
+          selectedTeam = {selectedTeam}
+          teamMemberCount = {employees.filter((employee) => employee.teamName === selectedTeam).length}
+        />
+        <Routes>
+          <Route path='/' element={
+            <Employees
+              employees={employees}
+              selectedTeam={selectedTeam}
+              handleTeamChange={handleTeamChange}
+              handleEmployeeCardClick = {handleEmployeeCardClick}
+              />
+          }>
+          </Route>
 
-      <Employees
-        employees={employees}
-        selectedTeam={selectedTeam}
-        handleTeamChange={handleTeamChange}
-        handleEmployeeCardClick = {handleEmployeeCardClick}
-      />
+          <Route path='/GroupedTeamMembers' element={
+            <GroupedTeamMembers
+              employees={employees}
+              selectedTeam={selectedTeam}
+              setTeam={setTeam}
+            />
+          }>
+          </Route>
+          <Route path='*' element={
+            <NotFound />
+          }>
+          </Route>
+        </Routes>
 
-      <Footer/>
+        <Footer/>
+
+      </Router>
     </div>
   );
 }
